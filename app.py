@@ -44,7 +44,7 @@ async def root():
 
 @app.get("/api/test")
 async def test():
-    return {"message": "성공적인 테스트."}
+    return {"message": "성공적인 테스트." + GEMINI_API_KEY}
 
 @app.get("/api/hello/{name}")
 async def say_hello(name: str):
