@@ -5,7 +5,7 @@ import os
 app = FastAPI()
 PERPLEXITY_API_KEY = os.environ.get("PERPLEXITY_API_KEY")  # 환경변수 사용 권장
 
-@app.post("/webhook")
+@app.post("/api/webhook")
 async def kakao_webhook(req: Request):
     data = await req.json()
     user_message = data['userRequest']['utterance']
@@ -41,11 +41,10 @@ async def kakao_webhook(req: Request):
         }
     }
 
-@app.get("/")
+@app.get("/api")
 async def root():
     return {"message": "Hello World"}
 
-
-@app.get("/hello/{name}")
+@app.get("/api/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"반가워 {name}"}
