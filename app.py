@@ -41,9 +41,9 @@ async def kakao_webhook(req: Request):
         }
     }
 
-@app.get("/api")
+@app.get("/api/test")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "성공적인 테스트."}
 
 @app.get("/api/hello/{name}")
 async def say_hello(name: str):
