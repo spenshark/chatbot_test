@@ -9,8 +9,6 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-2.0-flash')
 
-print("GEMINI_API_KEY:", os.environ.get("GEMINI_API_KEY"))
-
 @app.post("/api/webhook")
 async def kakao_webhook(req: Request):
     data = await req.json()
@@ -40,9 +38,9 @@ async def kakao_webhook(req: Request):
         }
     }
 
-@app.get("/api")
+@app.get("/key")
 async def root():
-    return {"message": "안녕하세요. FastAPI 서버입니다."}
+    return {"message": GEMINI_API_KEY}
 
 @app.get("/api/test")
 async def test():
