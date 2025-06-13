@@ -1,35 +1,32 @@
 from fastapi import FastAPI, Request
-import requests
 import os
+import google.generativeai as genai
 
 app = FastAPI()
-PERPLEXITY_API_KEY = os.environ.get("PERPLEXITY_API_KEY")  # 환경변수 사용 권장
+
+# 환경변수 사용 권장
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 @app.post("/api/webhook")
 async def kakao_webhook(req: Request):
     data = await req.json()
     user_message = data['userRequest']['utterance']
 
-    # Perplexity API에 요청
-    headers = {
-        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "model": "sonar-medium-online",  # 원하는 모델명
-        "messages": [
-            {"role": "system", "content": "정확하고 간결하게 답변해 주세요."},
-            {"role": "user", "content": user_message}
+    # Gemini API에 요청
+    response = model.generate_content(
+        contents=[
+            {"role": "user", "parts": [{"text": "정확하고 간결하게 답변해 주세요."}]},
+            {"role": "model", "parts": [{"text": "네, 알겠습니다."}]},
+            {"role": "user", "parts": [{"text": user_message}]}
         ],
-        "max_tokens": 500,
-        "temperature": 0.7
-    }
-    response = requests.post(
-        "https://api.perplexity.ai/chat/completions",
-        headers=headers, json=payload
+        generation_config={
+            "max_output_tokens": 500,
+            "temperature": 0.7,
+        }
     )
-    result = response.json()
-    answer = result["choices"][0]["message"]["content"]
+    answer = response.text
 
     # 카카오톡 챗봇 응답 포맷
     return {
@@ -41,7 +38,7 @@ async def kakao_webhook(req: Request):
         }
     }
 
-@app.get("")
+@app.get("/api")
 async def root():
     return {"message": "안녕하세요. FastAPI 서버입니다."}
 
