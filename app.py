@@ -41,8 +41,12 @@ async def kakao_webhook(req: Request):
         }
     }
 
-@app.get("/api/test")
+@app.get("")
 async def root():
+    return {"message": "안녕하세요. FastAPI 서버입니다."}
+
+@app.get("/api/test")
+async def test():
     return {"message": "성공적인 테스트."}
 
 @app.get("/api/hello/{name}")
